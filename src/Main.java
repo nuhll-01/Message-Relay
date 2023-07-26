@@ -1,3 +1,5 @@
+// Creator of Project: ToastyyX
+
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -5,30 +7,36 @@ import javax.activation.*;
 import java.nio.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner stdIn = new Scanner(System.in);
+    static final int MIN_CHARACTER_LENGTH = 6;
+    static final int MAX_CHARACTER_LENGTH = 254;
+    static Scanner stdIn = new Scanner(System.in);
 
-        int minCharacterLength = 6;
-        int maxCharacterLength = 254;
+    // TODO: Add Recipients Email Address + Verify the behavior of the code
+    public static String getRecipient() {
         String recipient;
-        String senderEmail;
-        String senderEmailPassword = ""; // Google Password
-
-        // TODO: Add Recipients Email Address
         System.out.print("Enter the recipient email address: ");
         recipient = stdIn.nextLine();
-        if (recipient.length() < minCharacterLength || recipient.length() > maxCharacterLength) {
+        if (recipient.length() < MIN_CHARACTER_LENGTH || recipient.length() > MAX_CHARACTER_LENGTH) {
             System.out.println("Input must be between 6 - 254 characters.");
         }
-
-        // TODO: Add Senders Emails Address
-        System.out.print("Enter the sender email address: ");
-        senderEmail = stdIn.nextLine();
-        if (senderEmail.length() < minCharacterLength || senderEmail.length() > maxCharacterLength) {
-            System.out.println("Input must be between 6 - 254 characters.");
-        }
-
         stdIn.close();
+        return recipient;
+    }
+
+    // TODO: Add Senders Email Address + Verify the behavior of the code
+    public static String getSender() {
+        String sender;
+        System.out.print("Enter the sender email address: ");
+        sender = stdIn.nextLine();
+        if (sender.length() < MIN_CHARACTER_LENGTH || sender.length() > MAX_CHARACTER_LENGTH) {
+            System.out.println("Input must be between 6 - 254 characters.");
+        }
+        stdIn.close();
+        return sender;
+    }
+
+    public static void main(String[] args) {
+        String senderEmailPassword = ""; // Google Application Password
 
         // TODO: Create Properties Object
         Properties properties = System.getProperties();
