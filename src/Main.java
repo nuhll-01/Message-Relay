@@ -31,7 +31,7 @@ public class Main {
         // Here is a link to the Google support page on how to generate an app password:
         // https://support.google.com/mail/answer/185833?hl=en
 
-        System.out.print("From: "); 
+        System.out.print("From: ");
         sender = stdIn.next();
         if (checkLength(sender)) {
             System.out.println("Input must be between 6 - 254 characters.");
@@ -63,11 +63,9 @@ public class Main {
         // https://en.wikipedia.org/wiki/MIME#:~:text=at%20the%20end.-,Multipart%20subtypes,field%20of%20the%20overall%20message.
         try {
             MimeMessage message = new MimeMessage(session);
-            MimeMultipart multipart = new MimeMultipart("mixed"); // Creates a new multipart object w/ subtype 'mixed.'
 
             String messageContent = "Hey! This email message was sent by me using the <strong>JavaMail API!</strong> " +
                     "There's an attachment file containing an image of a cute cat.";
-
             MimeBodyPart messageBodyPart = new MimeBodyPart(); // Create a new body part that contains a message.
             messageBodyPart.setContent(messageContent, "text/html"); // Sets the content of the message body part to HTML.
 
@@ -75,12 +73,21 @@ public class Main {
             String filePath = "C:/Example/Example/Example/CuteCatImage.jpg"; // Insert a valid file path
             attachmentBodyPart.attachFile(filePath); // Attaches the file to the body part.
 
+            String secondMessageContent = "<br><br>While you're add it, " +
+                    "I highly recommend checking out this song by Cocteau Twins called " +
+                    "<a href=\"https://youtu.be/PV2bO40zL0I\">'She Will Destroy You'</a>.";
+            MimeBodyPart messageBodyPart2 = new MimeBodyPart(); // Create a new body part that contains a message.
+            messageBodyPart2.setContent(secondMessageContent, "text/html"); // Sets the content of the message body part to HTML.
+
+            MimeMultipart multipart = new MimeMultipart("mixed"); // Creates a new multipart object w/ subtype 'mixed.'
+
             message.setFrom(new InternetAddress(sender));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-            message.setSubject("JavaMail API Test Message");
             message.setSentDate(new Date());
+            message.setSubject("JavaMail API Test Message");
             multipart.addBodyPart(messageBodyPart); // Adds the message body part to the multipart object.
             multipart.addBodyPart(attachmentBodyPart); // Adds the attachment body part to the multipart object.
+            multipart.addBodyPart(messageBodyPart2); // Adds the second message body part to the multipart object.
             message.setContent(multipart);
 
             Transport.send(message); // Sends the message by the Transport class.
