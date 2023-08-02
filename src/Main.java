@@ -48,7 +48,7 @@ public class Main {
         properties.put("mail.smtp.auth", "true"); // Enables authentication
         properties.put("mail.smtp.starttls.enable", "true"); // Enables the use of STARTTLS
         properties.put("mail.smtp.host", "smtp.gmail.com"); // Creates a mail server
-        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.port", "587"); // Sets the port of the mail server to 587 (recommended)
 
         // Create a session with account credentials
         Session session = Session.getInstance(properties, new Authenticator() { // Authenticates the sender's email account
@@ -58,10 +58,14 @@ public class Main {
             }
         });
 
+        // For additional information regarding the 'MimeMultiPart' parameter subtypes
+        // Reference the following article:
+        // https://en.wikipedia.org/wiki/MIME#:~:text=at%20the%20end.-,Multipart%20subtypes,field%20of%20the%20overall%20message.
         try {
             MimeMessage message = new MimeMessage(session);
-            MimeMultipart multipart = new MimeMultipart("related");
-            String messageContent = "Hey! This email message was sent by me using the JavaMail API! " +
+            MimeMultipart multipart = new MimeMultipart("mixed"); // Creates a new multipart object w/ subtype 'mixed.'
+
+            String messageContent = "Hey! This email message was sent by me using the <strong>JavaMail API!</strong> " +
                     "There's an attachment file containing an image of a cute cat.";
 
             MimeBodyPart messageBodyPart = new MimeBodyPart(); // Create a new body part that contains a message.
@@ -69,7 +73,7 @@ public class Main {
 
             MimeBodyPart attachmentBodyPart = new MimeBodyPart(); // Creates a new body part that contains an attachment file.
             String filePath = "C:/Example/Example/Example/CuteCatImage.jpg"; // Insert a valid file path
-            attachmentBodyPart.attachFile(filePath);
+            attachmentBodyPart.attachFile(filePath); // Attaches the file to the body part.
 
             message.setFrom(new InternetAddress(sender));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
@@ -80,9 +84,9 @@ public class Main {
             message.setContent(multipart);
 
             Transport.send(message); // Sends the message by the Transport class.
-            System.out.println("\nMail successfully sent");
+            System.out.println("\nMail Successfully Sent");
         } catch (MessagingException messagingException) {
-            System.out.println("send failed, exception: " + messagingException);
+            System.out.println("\nSend Failed: Exception: " + messagingException);
         } catch (IOException ex) {
             throw new RuntimeException();
         }
