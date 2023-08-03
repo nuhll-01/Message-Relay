@@ -18,6 +18,7 @@ public class Main {
 
         String sender;
         String recipient;
+        String response;
         String appPassword = ""; // Generate an Application Password
 
         // *** Please read the comment below regarding the 'appPassword' variable. ***
@@ -39,6 +40,16 @@ public class Main {
 
         System.out.print("To: ");
         recipient = stdIn.next();
+        System.out.print("Verify Email" + "\nIs this correct? " + recipient + " (Yes/No): " );
+        response = stdIn.next();
+        while (emailValidation(response)) {
+            System.out.print("To: ");
+            recipient = stdIn.next();
+            System.out.print("Verify Email" + "\nIs this correct? " + recipient + " (Yes/No): " );
+            response = stdIn.next();
+        }
+
+
         if (checkLength(recipient)) {
             System.out.println("Input must be between 6 - 254 characters.");
         }
@@ -104,5 +115,15 @@ public class Main {
         final int MIN_CHARACTER_LENGTH = 6;
         final int MAX_CHARACTER_LENGTH = 254;
         return character.length() < MIN_CHARACTER_LENGTH || character.length() > MAX_CHARACTER_LENGTH;
+    }
+
+    public static boolean emailValidation(String response) {
+        if (response.equalsIgnoreCase("no")) {
+            return true;
+        } else if (!response.equalsIgnoreCase("no") && !response.equalsIgnoreCase("yes")) {
+            System.out.println("Invalid Input");
+            return true;
+        }
+        return false;
     }
 }
