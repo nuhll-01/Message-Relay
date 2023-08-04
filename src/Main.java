@@ -17,8 +17,10 @@ public class Main {
         Scanner stdIn = new Scanner(System.in);
 
         String sender;
+        String verifySender;
+        String finalSender;
         String recipient;
-        String response;
+        String verifyRecipient;
         String appPassword = ""; // Generate an Application Password
 
         // *** Please read the comment below regarding the 'appPassword' variable. ***
@@ -33,22 +35,32 @@ public class Main {
         // https://support.google.com/mail/answer/185833?hl=en
 
         System.out.print("From: ");
-        sender = stdIn.next();
+        sender = stdIn.nextLine();
+        System.out.print("\nVerify Email" + "\nIs this correct? " + sender + " (Yes/No): ");
+        verifySender = stdIn.nextLine();
+        while (emailValidation(verifySender)) {
+            System.out.print("From: ");
+            sender = stdIn.nextLine();
+            System.out.print("\nVerify Email" + "\nIs this correct? " + sender + " (Yes/No): ");
+            verifySender = stdIn.nextLine();
+        }
+
         if (checkLength(sender)) {
             System.out.println("Input must be between 6 - 254 characters.");
         }
 
-        System.out.print("To: ");
-        recipient = stdIn.next();
-        System.out.print("Verify Email" + "\nIs this correct? " + recipient + " (Yes/No): " );
-        response = stdIn.next();
-        while (emailValidation(response)) {
-            System.out.print("To: ");
-            recipient = stdIn.next();
-            System.out.print("Verify Email" + "\nIs this correct? " + recipient + " (Yes/No): " );
-            response = stdIn.next();
-        }
+        finalSender = sender;
 
+        System.out.print("To: ");
+        recipient = stdIn.nextLine();
+        System.out.print("\nVerify Email" + "\nIs this correct? " + recipient + " (Yes/No): ");
+        verifyRecipient = stdIn.nextLine();
+        while (emailValidation(verifyRecipient)) {
+            System.out.print("To: ");
+            recipient = stdIn.nextLine();
+            System.out.print("\nVerify Email" + "\nIs this correct? " + recipient + " (Yes/No): ");
+            verifyRecipient = stdIn.nextLine();
+        }
 
         if (checkLength(recipient)) {
             System.out.println("Input must be between 6 - 254 characters.");
@@ -65,7 +77,7 @@ public class Main {
         Session session = Session.getInstance(properties, new Authenticator() { // Authenticates the sender's email account
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(sender, appPassword);
+                return new PasswordAuthentication(finalSender, appPassword);
             }
         });
 
@@ -117,13 +129,36 @@ public class Main {
         return character.length() < MIN_CHARACTER_LENGTH || character.length() > MAX_CHARACTER_LENGTH;
     }
 
-    public static boolean emailValidation(String response) {
+    public static boolean emailValidation(@NotNull String response) {
         if (response.equalsIgnoreCase("no")) {
             return true;
-        } else if (!response.equalsIgnoreCase("no") && !response.equalsIgnoreCase("yes")) {
-            System.out.println("Invalid Input");
+        } else if (!response.equalsIgnoreCase("no") && !response.equalsIgnoreCase("yes") || response.contains(" ")) {
+            System.out.println("Invalid Input.");
             return true;
         }
         return false;
     }
+
+    // TODO:
+    //  Implement a method that allows the user to input a path of a file
+    //  (i.e. image, audio) as part of the email attachment.
+
+    // public static void setAttachment(String response) {
+    //     String attachmentResponse;
+    //     String attachment;
+    //     String path;
+    //     Scanner stdIn = new Scanner(System.in);
+    //     System.out.print("Insert Attachment? " + " (Yes/No): ");
+    //     attachmentResponse = stdIn.nextLine();
+    //     if (attachmentResponse.equalsIgnoreCase("yes")) {
+    //         System.out.print("\nPath: ");
+    //         path = stdIn.nextLine();
+    //         attachment = path;
+    //
+    //     }
+    // }
+
+    // public static String getAttachment(String attachment) {
+    //     return attachment;
+    // }
 }
