@@ -14,12 +14,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Email email =  new Email();
         Scanner stdIn = new Scanner(System.in);
 
-        String sender;
-        String userResponse;
-        String finalSender;
-        String recipient;
+        String response;
         String appPassword = ""; // Generate an Application Password
 
         // *** Please read the comment below regarding the 'appPassword' variable. ***
@@ -34,35 +32,26 @@ public class Main {
         // https://support.google.com/mail/answer/185833?hl=en
 
         System.out.print("From: ");
-        sender = stdIn.nextLine();
-        System.out.print("\nVerify your email" + "\nIs this correct? " + sender + " (Yes/No): ");
-        userResponse = stdIn.nextLine();
-        while (isInvalidEmail(userResponse)) {
-            System.out.print("From: ");
-            sender = stdIn.nextLine();
-            System.out.print("\nVerify Email" + "\nIs this correct? " + sender + " (Yes/No): ");
-            userResponse = stdIn.nextLine();
+        email.setSender(stdIn.nextLine());
+
+        System.out.print("\nVerify your email" + "\nIs the following email correct? " + "\nEmail: " + "\"" + email.getSender() + "\"" + " \n(Yes/No): ");
+        response = stdIn.nextLine();
+        while (isInvalidEmail(response)) {
+            System.out.print("\nFrom: ");
+            email.setSender(stdIn.nextLine());
+            System.out.print("\nVerify your email" + "\nIs the following email correct? " + "\n" + "\"" + email.getSender() + "\"" + " \n(Yes/No): ");
+            response = stdIn.nextLine();
         }
 
-        if (checkLength(sender)) {
-            System.out.println("Input must be between 6 - 254 characters.");
-        }
-
-        finalSender = sender;
-
-        System.out.print("To: ");
-        recipient = stdIn.nextLine();
-        System.out.print("\nVerify Email" + "\nIs this correct? " + recipient + " (Yes/No): ");
-        userResponse = stdIn.nextLine();
-        while (isInvalidEmail(userResponse)) {
-            System.out.print("To: ");
-            recipient = stdIn.nextLine();
-            System.out.print("\nVerify Email" + "\nIs this correct? " + recipient + " (Yes/No): ");
-            userResponse = stdIn.nextLine();
-        }
-
-        if (checkLength(recipient)) {
-            System.out.println("Input must be between 6 - 254 characters.");
+        System.out.print("\nTo: ");
+        email.setRecipient(stdIn.nextLine());
+        System.out.print("\nVerify your email" + "\nIs the following email correct? " + "\nEmail: " + "\"" + email.getRecipient() + "\"" + " \n(Yes/No): ");
+        response = stdIn.nextLine();
+        while (isInvalidEmail(response)) {
+            System.out.print("\nTo: ");
+            email.setRecipient(stdIn.nextLine());
+            System.out.print("\nVerify your email" + "\nIs the following email correct? " + "\nEmail: " + "\"" + email.getRecipient() + "\"" + " \n(Yes/No): ");
+            response = stdIn.nextLine();
         }
 
         // Create system properties for the mail server
@@ -76,7 +65,7 @@ public class Main {
         Session session = Session.getInstance(properties, new Authenticator() { // Authenticates the sender's email account
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(finalSender, appPassword);
+                return new PasswordAuthentication(email.getSender(), appPassword);
             }
         });
 
@@ -103,8 +92,8 @@ public class Main {
 
             MimeMultipart multipart = new MimeMultipart("mixed"); // Creates a new multipart object w/ subtype 'mixed.'
 
-            message.setFrom(new InternetAddress(sender));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setFrom(new InternetAddress(email.getSender()));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(email.getRecipient()));
             message.setSentDate(new Date());
             message.setSubject("JavaMail API Test Message");
             multipart.addBodyPart(messageBodyPart); // Adds the message body part to the multipart object.
@@ -122,26 +111,16 @@ public class Main {
         stdIn.close();
     }
 
-    public static boolean checkLength(@NotNull String character) {
+    public static boolean checkLength(@NotNull String email) {
         final int MIN_CHARACTER_LENGTH = 6;
         final int MAX_CHARACTER_LENGTH = 254;
-        return character.length() < MIN_CHARACTER_LENGTH || character.length() > MAX_CHARACTER_LENGTH;
+        return email.length() < MIN_CHARACTER_LENGTH || email.length() > MAX_CHARACTER_LENGTH;
     }
 
     public static boolean isInvalidEmail(@NotNull String response) {
         if (response.equalsIgnoreCase("no")) {
             return true;
-        } else if (!response.equalsIgnoreCase("no") && !response.equalsIgnoreCase("yes") || response.contains(" ")) {
-            System.out.println("Invalid Input.");
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isValidYesNoResponse(@NotNull String response) {
-        if (response.equalsIgnoreCase("no")) {
-            return true;
-        } else if (!response.equalsIgnoreCase("no") && !response.equalsIgnoreCase("yes") || response.contains(" ")) {
+        } else if (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no") || response.contains(" ")) {
             System.out.println("Invalid Input.");
             return true;
         }
@@ -152,20 +131,4 @@ public class Main {
     //  Implement a method that allows the user to input a path of a file
     //  (i.e. image, audio) as part of the email attachment.
 
-    public static void setAttachment(String response) {
-        Scanner stdIn = new Scanner(System.in);
-        String attachment;
-        String attachmentResponse;
-
-        System.out.print("Insert Attachment? " + " (Yes/No): ");
-        attachmentResponse = stdIn.nextLine();
-        while (isValidYesNoResponse(attachmentResponse)) {
-            System.out.print("Insert Attachment? " + " (Yes/No): ");
-            attachmentResponse = stdIn.nextLine();
-        }
-    }
-
-    public static String getAttachment(String attachment) {
-        return attachment;
-    }
 }
